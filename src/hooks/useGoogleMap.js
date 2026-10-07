@@ -1,13 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { loadGoogleMaps } from '../services/googleMaps';
 
-const DEFAULT_CENTER = { lat: 3.139, lng: 101.6869 }; // Kuala Lumpur
+const DEFAULT_CENTER = { lat: 3.139, lng: 101.6869 };
 
 export default function useGoogleMap(containerRef, place) {
   const mapRef = useRef(null);
   const markerRef = useRef(null);
 
-  // Create the map once
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -19,7 +18,7 @@ export default function useGoogleMap(containerRef, place) {
       mapRef.current = new Map(containerRef.current, {
         center: DEFAULT_CENTER,
         zoom: 11,
-        mapId: 'DEMO_MAP_ID', // required for AdvancedMarker; use your own Map ID in production
+        mapId: 'DEMO_MAP_ID',
       });
       markerRef.current = new AdvancedMarkerElement({ map: null });
     })();
@@ -28,7 +27,6 @@ export default function useGoogleMap(containerRef, place) {
     };
   }, [containerRef]);
 
-  // React to selected place changes
   useEffect(() => {
     if (!place || !mapRef.current || !markerRef.current) return;
     const position = { lat: place.lat, lng: place.lng };

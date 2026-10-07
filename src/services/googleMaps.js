@@ -31,7 +31,6 @@ export async function getSuggestions(input) {
     sessionToken,
   });
 
-  // Return plain serializable objects (Redux requirement)
   return suggestions.map(({ placePrediction }) => ({
     placeId: placePrediction.placeId,
     description: placePrediction.text.text,
@@ -48,7 +47,7 @@ export async function getPlaceDetails(placeId) {
     fields: ['displayName', 'formattedAddress', 'location'],
     ...(sessionToken && { sessionToken }),
   });
-  sessionToken = undefined; // session ends after selection
+  sessionToken = undefined;
 
   return {
     placeId,

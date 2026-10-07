@@ -1,6 +1,7 @@
 import SearchBox from './components/SearchBox';
 import MapView from './components/MapView';
 import SearchHistory from './components/SearchHistory';
+import FavouritesList from './components/FavouritesList';
 
 export default function App() {
   return (
@@ -11,7 +12,8 @@ export default function App() {
           <div className="mb-3"><SearchBox /></div>
           <MapView />
         </div>
-        <div className="col-lg-4">
+        <div className="col-lg-4 d-flex flex-column gap-4">
+          <FavouritesList />
           <SearchHistory />
         </div>
       </div>

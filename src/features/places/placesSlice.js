@@ -6,7 +6,7 @@ const initialState = {
   suggestionsStatus: 'idle', // idle | loading | failed
   currentRequestId: null,
   selected: null,
-  history: [], // every place the user searched
+  history: [],
   error: null,
 };
 
@@ -17,6 +17,7 @@ const placesSlice = createSlice({
     clearSuggestions(state) {
       state.suggestions = [];
       state.suggestionsStatus = 'idle';
+      state.currentRequestId = null;
     },
     selectFromHistory(state, action) {
       state.selected = action.payload;
@@ -32,7 +33,6 @@ const placesSlice = createSlice({
         state.currentRequestId = meta.requestId;
       })
       .addCase(fetchSuggestions.fulfilled, (state, { meta, payload }) => {
-        // Ignore stale responses that arrive out of order
         if (state.currentRequestId !== meta.requestId) return;
         state.suggestions = payload;
         state.suggestionsStatus = 'idle';
