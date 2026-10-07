@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useDebounce from '../hooks/useDebounce';
 import { fetchSuggestions, selectPlace } from '../features/places/placesThunks';
@@ -8,15 +8,22 @@ export default function SearchBox() {
   const dispatch = useDispatch();
   const { suggestions, suggestionsStatus, error } = useSelector((s) => s.places);
   const [query, setQuery] = useState('');
+  const pickedTextRef = useRef('');
   const debouncedQuery = useDebounce(query.trim(), 300);
 
   useEffect(() => {
+    if (debouncedQuery === pickedTextRef.current) {
+      dispatch(clearSuggestions());
+      return;
+    }
     if (debouncedQuery.length >= 2) dispatch(fetchSuggestions(debouncedQuery));
     else dispatch(clearSuggestions());
   }, [debouncedQuery, dispatch]);
 
   const handlePick = (s) => {
+    pickedTextRef.current = s.description.trim();
     setQuery(s.description);
+    dispatch(clearSuggestions());
     dispatch(selectPlace(s.placeId));
   };
 
