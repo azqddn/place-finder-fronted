@@ -1,0 +1,41 @@
+import { useEffect, useRef } from 'react';
+import { loadGoogleMaps } from '../services/googleMaps';
+
+const DEFAULT_CENTER = { lat: 3.139, lng: 101.6869 }; // Kuala Lumpur
+
+export default function useGoogleMap(containerRef, place) {
+  const mapRef = useRef(null);
+  const markerRef = useRef(null);
+
+  // Create the map once
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await loadGoogleMaps();
+      const { Map } = await google.maps.importLibrary('maps');
+      const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
+      if (cancelled || !containerRef.current) return;
+
+      mapRef.current = new Map(containerRef.current, {
+        center: DEFAULT_CENTER,
+        zoom: 11,
+        mapId: 'DEMO_MAP_ID', // required for AdvancedMarker; use your own Map ID in production
+      });
+      markerRef.current = new AdvancedMarkerElement({ map: null });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [containerRef]);
+
+  // React to selected place changes
+  useEffect(() => {
+    if (!place || !mapRef.current || !markerRef.current) return;
+    const position = { lat: place.lat, lng: place.lng };
+    mapRef.current.panTo(position);
+    mapRef.current.setZoom(15);
+    markerRef.current.position = position;
+    markerRef.current.title = place.name;
+    markerRef.current.map = mapRef.current;
+  }, [place]);
+}
